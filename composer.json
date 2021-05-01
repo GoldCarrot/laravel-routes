@@ -1,0 +1,21 @@
+{
+  "name": "goldcarrot/laravel-routes",
+  "description": "Laravel routes helpers",
+  "authors": [
+    {
+      "name": "Tyrgola Sergey",
+      "email": "ts@goldcarrot.ru",
+      "role": "Developer"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.0",
+    "laravel/framework": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "GoldcarrotLaravel\\Routes\\": "src/"
+    }
+  }
+}
