@@ -4,12 +4,13 @@ namespace GoldcarrotLaravel\Routes;
 
 use GoldcarrotLaravel\Routes\Values\RouteModuleValue;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
-class ServiceProvider extends ServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
     private const ROUTE_SEPARATOR = '/';
     private const NAMESPACE_SEPARATOR = "\\";
