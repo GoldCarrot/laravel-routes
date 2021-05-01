@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
-class RouteServiceProvider extends ServiceProvider
+class ServiceProvider extends ServiceProvider
 {
     private const ROUTE_SEPARATOR = '/';
     private const NAMESPACE_SEPARATOR = "\\";
