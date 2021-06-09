@@ -79,7 +79,7 @@ class RouteServiceProvider extends ServiceProvider
 
         return $this
             ->explodePath($this->namespace . DIRECTORY_SEPARATOR . $namespace)
-            ->map(fn($piece) => Str::ucfirst($piece))
+            ->map(fn($piece) => Str::ucfirst(Str::camel($piece)))
             ->join(self::NAMESPACE_SEPARATOR);
     }
 
