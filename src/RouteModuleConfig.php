@@ -13,7 +13,9 @@ class RouteModuleConfig
     {
         $this->config = $config;
 
-        Arr::get($config, 'directory', throw new InvalidConfigurationException('Directory must be set in each module'));
+        if (!Arr::has($config, 'directory')) {
+            throw new InvalidConfigurationException('Directory must be set in each module');
+        }
     }
 
     public function extendNamespace(): bool
@@ -26,17 +28,17 @@ class RouteModuleConfig
         return (bool)Arr::get($this->config, 'extendPrefixFromFolders', true);
     }
 
-    public function getDirectory(): array
+    public function getDirectory()
     {
         return Arr::get($this->config, 'directory');
     }
 
-    public function getNamespace(): array
+    public function getNamespace()
     {
         return Arr::get($this->config, 'namespace');
     }
 
-    public function getPrefix(): array
+    public function getPrefix()
     {
         return Arr::get($this->config, 'prefix');
     }
