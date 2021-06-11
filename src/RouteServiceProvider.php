@@ -2,9 +2,8 @@
 
 namespace GoldcarrotLaravel\Routes;
 
-use GoldcarrotLaravel\Routes\Values\RouteModuleValue;
+use Arr;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -17,51 +16,48 @@ class RouteServiceProvider extends ServiceProvider
 
     public function __construct($app)
     {
-        $this->namespace = config('routes.namespace');
         parent::__construct($app);
+
+        $this->namespace = config('routes.namespace');
     }
 
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/../config/routes.php' => config_path('routes.php'),
-        ], 'config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/routes.php' => config_path('routes.php')
+            ], 'routes-config');
+        }
+
 
         parent::boot();
     }
 
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/routes.php',
-            'routes'
-        );
+        $this->mergeConfigFrom(__DIR__ . '/../config/routes.php', 'routes');
 
         parent::register();
     }
 
-    private function mapRoutes($path, $namespace = null, $prefix = null, $middleware = []): void
+    private function mapRoutes($path, $namespace = null, $prefix = null, RouteModuleConfig $config = null): void
     {
-        Route::namespace($namespace)
-            ->middleware($middleware)
-            ->prefix($prefix)
-            ->group(base_path($path));
+        $route = Route::namespace($namespace)->prefix($prefix)->middleware($config->getMiddleware());
+
+        $config->getAs() && $route->as($config->getAs());
+        $config->getDomain() && $route->domain($config->getDomain());
+        $config->getWhere() && $route->where($config->getWhere());
+
+        $route->group(base_path($path));
     }
 
     private function explodePath(string $path): Collection
     {
-        $path = str_replace('\\', '/', $path);
-        $pieces = collect();
-
-        while ($piece = basename($path)) {
-            $path = str_replace($piece, null, $path);
-            $pieces->push($piece);
-        }
-
-        return $pieces->reverse()->values();
+        preg_match_all("/[^\\\<>\/|\"]+/", $path, $pieces);
+        return collect($pieces[0] ?? []);
     }
 
-    private function pathWithout($path, $without)
+    private function pathWithout($path, $without): string
     {
         $path = $this->explodePath($path)->join(DIRECTORY_SEPARATOR);
         $without = $this->explodePath($without)->join(DIRECTORY_SEPARATOR);
@@ -69,11 +65,11 @@ class RouteServiceProvider extends ServiceProvider
         return $this->explodePath(str_replace($without, null, $path))->join(DIRECTORY_SEPARATOR);
     }
 
-    private function normalizeNamespace(RouteModuleValue $config, string $dirname): string
+    private function normalizeNamespace(RouteModuleConfig $config, string $dirname): string
     {
         $namespace = $config->getNamespace();
 
-        if ($config->extendNamespaceFromFolders()) {
+        if ($config->extendNamespace()) {
             $namespace .= self::NAMESPACE_SEPARATOR . $dirname;
         }
 
@@ -83,10 +79,10 @@ class RouteServiceProvider extends ServiceProvider
             ->join(self::NAMESPACE_SEPARATOR);
     }
 
-    private function normalizePrefix(RouteModuleValue $config, string $dirname): string
+    private function normalizePrefix(RouteModuleConfig $config, string $dirname): string
     {
         $prefix = $config->getPrefix();
-        if ($config->extendPrefixFromFolders()) {
+        if ($config->extendPrefix()) {
             $prefix .= self::ROUTE_SEPARATOR . $dirname;
         }
 
@@ -100,7 +96,7 @@ class RouteServiceProvider extends ServiceProvider
         $modules = Arr::wrap(config('routes.modules'));
 
         foreach ($modules as $module) {
-            $routeConfig = new RouteModuleValue($module);
+            $routeConfig = new RouteModuleConfig($module);
 
             $files = File::allFiles(base_path('routes' . DIRECTORY_SEPARATOR . $routeConfig->getDirectory()));
 
@@ -112,7 +108,7 @@ class RouteServiceProvider extends ServiceProvider
                     $path,
                     $this->normalizeNamespace($routeConfig, $dirname),
                     $this->normalizePrefix($routeConfig, $dirname),
-                    $routeConfig->getMiddleware()
+                    $routeConfig
                 );
             }
         }
