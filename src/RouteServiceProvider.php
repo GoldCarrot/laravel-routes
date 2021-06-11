@@ -2,7 +2,6 @@
 
 namespace GoldcarrotLaravel\Routes;
 
-use Arr;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;

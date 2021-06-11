@@ -2,7 +2,7 @@
 
 namespace GoldcarrotLaravel\Routes;
 
-use GoldcarrotLaravel\Exceptions\InvalidConfigurationException;
+use GoldcarrotLaravel\Routes\Exceptions\InvalidConfigurationException;
 use Illuminate\Support\Arr;
 
 class RouteModuleConfig
