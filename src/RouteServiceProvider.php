@@ -88,6 +88,7 @@ class RouteServiceProvider extends ServiceProvider
 
         return $this
             ->explodePath($prefix)
+            ->map(fn($piece) => Str::snake($piece, '-'))
             ->join(self::ROUTE_SEPARATOR);
     }
 
