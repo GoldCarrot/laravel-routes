@@ -26,7 +26,7 @@ class RouteServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../config/routes.php' => config_path('routes.php')
-            ], 'routes-config');
+            ], 'config');
         }
 
 
