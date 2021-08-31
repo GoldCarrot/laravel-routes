@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 
 class RouteModuleConfig
 {
-    private array $config;
+    private $config;
 
     public function __construct(array $config)
     {
