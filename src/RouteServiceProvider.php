@@ -14,8 +14,8 @@ class RouteServiceProvider extends ServiceProvider
             __DIR__ . '/../config/routes.php' => config_path('routes.php')
         ], 'config');
 
-        $this->routes(function (RouteModuleRegistrar $routeModuleRegistrar) {
-            $routeModuleRegistrar->register(config('routes.modules'));
+        $this->routes(function () {
+            RouteModuleRegistrar::setRootNamespace($this->namespace)->register(config('routes.modules'));
         });
     }
 

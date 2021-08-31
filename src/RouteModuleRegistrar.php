@@ -8,14 +8,22 @@ use Illuminate\Support\Facades\Route;
 
 class RouteModuleRegistrar
 {
-    public function register($config = [], $rootNamespace = null)
+    private static $rootNamespace;
+
+    public static function setRootNamespace($namespace)
+    {
+        static::$rootNamespace = $namespace;
+        return app(static::class);
+    }
+
+    public function register($config = [])
     {
         foreach ($config as $moduleConfig) {
-            $this->registerModule(new RouteModuleConfig($moduleConfig), $rootNamespace);
+            $this->registerModule(new RouteModuleConfig($moduleConfig));
         }
     }
 
-    public function registerModule(RouteModuleConfig $moduleConfig, $rootNamespace = null)
+    public function registerModule(RouteModuleConfig $moduleConfig)
     {
         $files = File::allFiles(base_path('routes' . DIRECTORY_SEPARATOR . $moduleConfig->getDirectory()));
 
@@ -25,7 +33,7 @@ class RouteModuleRegistrar
 
             $this->mapRoutes(
                 $path,
-                PathHelper::normalizeNamespace($moduleConfig, $dirname, $rootNamespace),
+                PathHelper::normalizeNamespace($moduleConfig, $dirname, static::$rootNamespace),
                 PathHelper::normalizePrefix($moduleConfig, $dirname),
                 $moduleConfig
             );
