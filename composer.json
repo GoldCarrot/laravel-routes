@@ -1,6 +1,12 @@
 {
     "name": "goldcarrot/laravel-routes",
-    "description": "Laravel routes helpers",
+    "description": "Laravel package that allows loading routes from nested folders",
+    "keywords": [
+        "laravel",
+        "routes",
+        "framework",
+        "helpers"
+    ],
     "authors": [
         {
             "name": "Tyrgola Sergey",
